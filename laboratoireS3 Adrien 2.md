@@ -52,7 +52,7 @@ Attention:
 * Le bucket existe-t-il ?
 
 ```bash
-aws s3 ls --profile devopsteam99-i346 | grep "devopsteam*"
+aws s3 ls --profile devopsteam07 | grep "devopsteam*"
 ```
 
 ```
@@ -91,7 +91,7 @@ make_bucket: devopsteam99-i346
 * [Vérifier l'état du bucket avant votre commande]
 
 ```bash
-//TODO
+On ne peut pas vérifier l'état du bucket avant la commande'
 ```
 
 ```
@@ -168,12 +168,12 @@ An error occurred (AccessDenied) when calling the ListObjectsV2 operation: User:
 * [La commande à réaliser pour effecuter l'action demandée]
 
 ```bash
-//TODO
+aws s3 ls s3://devopsteam07-i346 --profile devopsteam07
 ```
 
 ```
 [OUTPUT]
-//TODO
+[OUTPUT]An error occurred (AccessDenied) when calling the ListObjectsV2 operation: User: arn:aws:iam::709024702237:user/devopsteam07-i346 is not authorized to perform: s3:ListBucket on resource: "arn:aws:s3:::devopsteam07-i346" because no identity-based policy allows the s3:ListBucket action
 ```
 
 ### Synchroniser un répertoire local de sa machine avec un bucket
@@ -196,12 +196,12 @@ An error occurred (AccessDenied) when calling the ListObjectsV2 operation: User:
 * [La commande à réaliser pour effecuter l'action demandée]
 
 ```bash
-//TODO
+aws s3 sync C:/testeUpload s3://devopsteam07-i346 --profile devopsteam07
 ```
 
 ```
 [OUTPUT]
-//TODO
+//fatal error: An error occurred (AccessDenied) when calling the ListObjectsV2 operation: User: arn:aws:iam::709024702237:user/devopsteam07-i346 is not authorized to perform: s3:ListBucket on resource: "arn:aws:s3:::devopsteam07-i346" because no identity-based policy allows the s3:ListBucket action
 ```
 
 ### Publier un fichier présent sur un bucket en générant un lien (url) temporaire
@@ -224,12 +224,12 @@ An error occurred (AccessDenied) when calling the ListObjectsV2 operation: User:
 * [La commande à réaliser pour effecuter l'action demandée]
 
 ```bash
-//TODO
+//aws s3 presign s3://devopsteam07-i346/test1.txt --expires-in 3600 --region eu-central-1 --profile devopsteam07
 ```
 
 ```
 [OUTPUT]
-//TODO
+//[OUTPUT]https://devopsteam07-i346.s3.eu-central-1.amazonaws.com/test1.txt?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2KFJKL4OZNTJHHVP%2F20250211%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20250211T132648Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=b63675db97a43a2a3d9cc1728c9cd08cc323b7e7bc75dd5fa8d047500479773b
 ```
 
 ### Supprimer un fichier
@@ -241,23 +241,25 @@ An error occurred (AccessDenied) when calling the ListObjectsV2 operation: User:
 * [Vérifier l'état du bucket avant votre commande]
 
 ```bash
-//TODO
+
+
 ```
 
 ```
 [OUTPUT]
-//TODO
+
+
 ```
 
 * [La commande à réaliser pour effecuter l'action demandée]
 
 ```bash
-//TODO
+//aws s3 rb s3://devopsteam07 --profil devopsteam07
 ```
 
 ```
 [OUTPUT]
-//TODO
+//remove_bucket: mybucket
 ```
 
 ### Vider un "repertoire"
@@ -280,12 +282,13 @@ An error occurred (AccessDenied) when calling the ListObjectsV2 operation: User:
 * [La commande à réaliser pour effecuter l'action demandée]
 
 ```bash
-//TODO
+aws s3 rm s3://devopsteam07 --profil devopsteam07 --recursive
 ```
 
 ```
 [OUTPUT]
-//TODO
+delete: s3://devopsteam07/test1.txt
+delete: s3://devopsteam07/test2.txt
 ```
 
 ### Extraire uniquement les metadonnées d'un objet
@@ -308,12 +311,12 @@ An error occurred (AccessDenied) when calling the ListObjectsV2 operation: User:
 * [La commande à réaliser pour effecuter l'action demandée]
 
 ```bash
-//TODO
+
 ```
 
 ```
 [OUTPUT]
-//TODO
+
 ```
 
 ### Vider le bucket
@@ -352,16 +355,37 @@ Consigne : répondre en utilisant des sources officielles et en vous appuyant de
 
 ### Pourquoi est-il déconseillé de détruire un bucket S3 selon AWS ?
 
-* [Sources AWS]
+* https://awscli.amazonaws.com/v2/documentation/api/latest/reference/s3/rb.html#description
 
-[Votre réponse]
+//Parce que c'est irréversible et que les données seront perdues
 
 ### Quelle est la différence entre un Bucket S3 et Glacier ?
 
-* [Sources AWS]
+* https://awscli.amazonaws.com/v2/documentation/api/latest/reference/glacier/index.html?highlight=glacier
 
-[Votre réponse]
+Le glacier, c'est pour stocker des données à long terme avec une solution de stockage spécifique pour le "cold data", alors que le bucket S3 c'est pour stocker des données à court terme
 
 ### Reprenez l'IAM "Policy" et expliquer ce que vous pouvez en déduire au niveau des droits qui vous sont alloués
 
 Consigne : Reprenez la "policy" et documenter chaque ligne
+
+
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow", //Autorisation pour les actions suivantes
+      "Action": "s3:ListAllMyBuckets", //Lister les buckets
+      "Resource": "arn:aws:s3:::*" //Dans tous les buckets
+    },
+    {
+      "Effect": "Allow", //Autorisation pour les actions suivantes
+      "Action": [
+      "s3:PutObject", //Rajouter un objet
+      "s3:GetObject", //Récupérer un objet
+      "s3:DeleteObject", //Supprimer un objet
+      ],
+        "Resource": "arn:aws:s3:::devopsteam<XX>-i346/*" //XX -> devopsteam number 
+      }
+    ]
+}
